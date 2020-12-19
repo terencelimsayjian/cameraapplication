@@ -1,10 +1,8 @@
 package com.terence.camera;
 
-import org.bytedeco.javacv.FrameConverter;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.bytedeco.javacv.OpenCVFrameGrabber;
-import org.bytedeco.opencv.opencv_core.IplImage;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,7 +15,7 @@ public class CameraConfig {
   }
 
   @Bean
-  OpenCVFrameConverter<IplImage> getFrameConverter() {
-    return new OpenCVFrameConverter.ToIplImage();
+  OpenCVFrameConverter.ToMat getFrameConverter() {
+    return new OpenCVFrameConverter.ToMat();
   }
 }

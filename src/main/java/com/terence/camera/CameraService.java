@@ -5,10 +5,8 @@ import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.OpenCVFrameConverter;
-import org.bytedeco.opencv.opencv_core.IplImage;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import java.nio.ByteBuffer;
@@ -22,36 +20,28 @@ public class CameraService {
   FrameGrabber frameGrabber;
 
   @Autowired
-  OpenCVFrameConverter<IplImage> frameConverter;
+  OpenCVFrameConverter.ToMat frameConverter;
 
-  @Autowired
-  ResourceLoader resourceLoader;
-
-  public byte[] captureFrame() {
+  public byte[] captureFrame() throws FrameGrabber.Exception {
     try {
       frameGrabber.start();
       Frame frame = frameGrabber.grab();
-      IplImage img = frameConverter.convert(frame);
+      Mat mat = frameConverter.convert(frame);
 
-      if (img != null) {
-        OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat();
-        Mat convert = converter.convert(frame);
+      BytePointer bytePointer = new BytePointer();
+      imencode(".jpg", mat, bytePointer);
 
-        BytePointer bytePointer = new BytePointer();
-        imencode(".jpg", convert, bytePointer);
+      ByteBuffer byteBuffer = bytePointer.asBuffer();
 
-        ByteBuffer byteBuffer = bytePointer.asBuffer();
+      byte[] arr = new byte[byteBuffer.remaining()];
+      byteBuffer.get(arr);
 
-        byte[] arr = new byte[byteBuffer.remaining()];
-        byteBuffer.get(arr);
-
-        return arr;
-      }
+      return arr;
     } catch (Exception e) {
-      log.error("Failed to take image");
-      e.printStackTrace();
+      log.error("Failed to take image", e);
+      throw e;
+    } finally {
+      frameGrabber.close();
     }
-
-    return new byte[0];
   }
 }
