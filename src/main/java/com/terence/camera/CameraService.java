@@ -22,14 +22,15 @@ public class CameraService {
   @Autowired
   OpenCVFrameConverter.ToMat frameConverter;
 
-  public byte[] captureFrame() throws FrameGrabber.Exception {
+  public byte[] captureFrame(ImageExtension imageExtension) throws FrameGrabber.Exception {
     try {
       frameGrabber.start();
       Frame frame = frameGrabber.grab();
       Mat mat = frameConverter.convert(frame);
 
       BytePointer bytePointer = new BytePointer();
-      imencode(".jpg", mat, bytePointer);
+      String extension = imageExtension.getValue();
+      imencode(extension, mat, bytePointer);
 
       ByteBuffer byteBuffer = bytePointer.asBuffer();
 

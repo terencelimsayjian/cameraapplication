@@ -1,2 +1,5 @@
 server:
   port: ${PORT:8000}
+
+variables:
+  camera_device_id: ${CAMERA_DEVICE_ID:0}
