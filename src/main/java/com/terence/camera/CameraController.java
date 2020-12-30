@@ -24,7 +24,6 @@ public class CameraController {
 
   @GetMapping(value = "/capture", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
   public byte[] captureImage(@RequestHeader("accept") String acceptHeader) throws IOException {
-    // Locking mechanism for camera resources?
     return cameraService.captureFrame(getExtensionBasedOnHeader(acceptHeader));
   }
 

@@ -22,7 +22,11 @@ public class CameraService {
   @Autowired
   OpenCVFrameConverter.ToMat frameConverter;
 
+  boolean currentlyHandlingRequest = false;
+
   public byte[] captureFrame(ImageExtension imageExtension) throws FrameGrabber.Exception {
+    currentlyHandlingRequest = true;
+
     try {
       frameGrabber.start();
       Frame frame = frameGrabber.grab();
@@ -43,6 +47,7 @@ public class CameraService {
       throw e;
     } finally {
       frameGrabber.close();
+      currentlyHandlingRequest = false;
     }
   }
 }
